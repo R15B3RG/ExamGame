@@ -1,0 +1,25 @@
+# Unity-grejer att ignorera
+[Lokal version]
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+MemoryCaptures/
+UserSettings/
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+
+# OS-grejer
+.DS_Store
+Thumbs.db
