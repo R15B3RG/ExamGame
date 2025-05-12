@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour
     {
         CreateImpactFx(collision);
 
-        Destroy(gameObject);
+        ObjectPool.instance.ReturnBullet(gameObject);
     }
 
     private void CreateImpactFx(Collision collision)

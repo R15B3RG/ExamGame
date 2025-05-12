@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 
 public enum WeaponType
 {
@@ -9,31 +10,80 @@ public enum WeaponType
     Rifle
 }
 
+public enum ShootType
+{
+    Single,
+    Auto
+}
+
 
 [System.Serializable] // Makes class visible in the inspector
 public class Weapon
 {
     public WeaponType weaponType;
 
+    [Header("Shooting specifics")]
+    public ShootType shootType;
+    public float fireRate = 1; //bullets per second
+    private float lastShootTime;
 
+    [Header("Magazine details")]
     public int bulletsInMagazine;
     public int magazineCapacity;
     public int totalReserveAmmo;
 
-    
+    [UnityEngine.Range(1, 2)]
     public float reloadSpeed; //How fast character reloads weapon
-    
+    [UnityEngine.Range(1, 2)]
     public float equipmentSpeed; //How fast character equips weapon
 
 
-    public bool CanShoot()
+    [Header("Spread")]
+    public float baseSpread = 1;
+    private float currentSpread = 2;
+    public float maximumSpread = 3;
+
+    public float spreadIncreaseRate = .15f;
+
+    private float lastSpreadUpdateTime;
+    private float spreadCooldown = 1;
+
+
+    #region Spread methods
+    public Vector3 ApplySpread(Vector3 originalDirection)
     {
-        return HaveEnoughBullets();
+        UpdateSpread();
+
+        float randomizedValue = Random.Range(-currentSpread, currentSpread);
+
+        Quaternion spreadRotation = Quaternion.Euler(randomizedValue, randomizedValue, randomizedValue);
+
+        return spreadRotation * originalDirection;
     }
 
-    private bool HaveEnoughBullets()
+
+    private void UpdateSpread()
     {
-        if (bulletsInMagazine > 0)
+        if (Time.time > lastSpreadUpdateTime + spreadCooldown)
+            currentSpread = baseSpread;
+        else
+            IncreaseSpread();
+
+
+        lastSpreadUpdateTime = Time.time;
+    }
+
+
+    private void IncreaseSpread()
+    {
+        currentSpread = Mathf.Clamp(currentSpread + spreadIncreaseRate, baseSpread, maximumSpread);
+    }
+
+    #endregion
+
+    public bool CanShoot()
+    {
+        if(HaveEnoughBullets() && ReadyToFire())
         {
             bulletsInMagazine--;
             return true;
@@ -41,6 +91,20 @@ public class Weapon
 
         return false;
     }
+
+    private bool ReadyToFire()
+    {
+        if (Time.time > lastShootTime + 1 / fireRate)
+        {
+            lastShootTime = Time.time;
+            return true;
+        }
+
+        return false;
+    }
+
+    #region Reload Methods
+    private bool HaveEnoughBullets() => bulletsInMagazine > 0;
 
     public bool CanReload()
     {
@@ -70,4 +134,6 @@ public class Weapon
         if(totalReserveAmmo < 0)
             totalReserveAmmo = 0;
     }
+
+    #endregion
 }
