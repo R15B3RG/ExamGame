@@ -151,6 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletImpactFX: {fileID: 1386304743346856028, guid: 22aa0947b4069854a80c44273365dd50, type: 3}
+  cd: {fileID: 7351597545772277073}
+  rb: {fileID: 4726395880993816582}
+  trailRenderer: {fileID: -8590964666577072296}
+  meshRenderer: {fileID: 7767479173762737474}
 --- !u!96 &-8590964666577072296
 TrailRenderer:
   serializedVersion: 3
