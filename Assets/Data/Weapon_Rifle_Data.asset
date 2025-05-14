@@ -10,25 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29b7da57724d6ee4d9884ec4e986ca49, type: 3}
-  m_Name: Weapon_Pistol_Data
+  m_Name: Weapon_Rifle_Data
   m_EditorClassIdentifier: 
-  weaponName: RT.47
-  bulletsInMagazine: 20
-  magazineCapacity: 20
+  weaponName: Stinger 999
+  bulletsInMagazine: 15
+  magazineCapacity: 15
   totalReserveAmmo: 10000
   shootType: 0
   bulletsPerShot: 1
-  fireRate: 4
+  fireRate: 1.5
   burstAvailable: 0
   burstActive: 0
   burstBulletsPerShot: 0
   burstFireRate: 0
   burstFireDelay: 0.1
-  baseSpread: 0.25
-  maxSpread: 2
+  baseSpread: 0
+  maxSpread: 0
   spreadIncreaseRate: 0.15
-  weaponType: 0
-  reloadSpeed: 2
-  equipmentSpeed: 2
-  gunDistance: 6
+  weaponType: 4
+  reloadSpeed: 1
+  equipmentSpeed: 1
+  gunDistance: 8
   cameraDistance: 6

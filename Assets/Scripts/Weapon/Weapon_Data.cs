@@ -6,6 +6,13 @@ public class Weapon_Data : ScriptableObject
 {
     public string weaponName;
 
+
+    [Header("Magazine details")]
+    public int bulletsInMagazine;
+    public int magazineCapacity;
+    public int totalReserveAmmo;
+
+
     [Header("Regular shot")]
     public ShootType shootType;
     public int bulletsPerShot = 1;

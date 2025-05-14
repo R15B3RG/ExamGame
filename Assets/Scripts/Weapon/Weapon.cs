@@ -21,6 +21,8 @@ public enum ShootType
 public class Weapon
 {
 
+    public WeaponType weaponType;
+
     #region Regular mode variables
     public ShootType shootType;
     public int bulletsPerShot {  get; private set; }
@@ -28,7 +30,7 @@ public class Weapon
     
 
     private float defaultFireRate;
-    private float fireRate = 1; //bullets per second
+    public float fireRate = 1; //bullets per second
     private float lastShootTime;
 
     #endregion
@@ -52,7 +54,7 @@ public class Weapon
 
     #region Weapon generic info variables
 
-    public WeaponType weaponType;
+    
     public float reloadSpeed { get; private set; } //How fast character reloads weapon
 
     public float equipmentSpeed { get; private set; } //How fast character equips weapon
@@ -77,8 +79,16 @@ public class Weapon
 
     #endregion
 
+
+    public Weapon_Data weaponData {  get; private set; } // serves as default weapon data
+
     public Weapon(Weapon_Data weaponData)
     {
+        bulletsInMagazine = weaponData.bulletsInMagazine;
+        magazineCapacity = weaponData.magazineCapacity;
+        totalReserveAmmo = weaponData.totalReserveAmmo;
+
+
         fireRate = weaponData.fireRate;
         weaponType = weaponData.weaponType;
 
@@ -110,6 +120,8 @@ public class Weapon
 
 
         defaultFireRate = fireRate;
+
+        this.weaponData = weaponData;
     }
         
 
