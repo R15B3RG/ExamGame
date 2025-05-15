@@ -1,18 +1,23 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
 
-    public float turnSpeed;
-    public float aggressionRange;
+    [SerializeField] protected int healthPoints = 20;
 
     [Header("Idle data")]
     public float idleTime;
+    public float aggressionRange;
 
 
     [Header("Move data")]
+    public float turnSpeed;
     public float moveSpeed;
+    public float chaseSpeed;
+    private bool manualMovement;
+    private bool manualRotation;
 
     [SerializeField] private Transform[] patrolPoints;
     private int currentPatrolIndex;
@@ -46,16 +51,45 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void OnDrawGizmos()
+    public virtual void GetHit()
+    {
+        healthPoints--;
+    }
+
+    public virtual void HitImpact(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        StartCoroutine(HitImpactCoroutine(force, hitPoint, rb));
+    }
+
+    private IEnumerator HitImpactCoroutine(Vector3 force, Vector3 hitPoint, Rigidbody rb)
+    {
+        yield return new WaitForSeconds(.1f);
+
+        rb.AddForceAtPosition(force, hitPoint, ForceMode.Impulse);
+    }
+
+    protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, aggressionRange);
+        
     }
+
+
+    public void ActivateManualMovement(bool manualMovement) => this.manualMovement = manualMovement;
+
+    public bool ManualMovementActive() => manualMovement;
+
+
+    public void ActivateManualRotation(bool manualRotation) => this.manualRotation = manualRotation;
+    public bool ManualRotationActive() => manualRotation;
 
 
     public void AnimationTrigger() => stateMachine.currentState.AnimationTrigger();
 
 
     public bool PlayerInAggressionRange() => Vector3.Distance(transform.position, player.position) < aggressionRange;
+
+    
 
     public Vector3 GetPatrolDestination()
     {

@@ -17,6 +17,7 @@ public class PlayerWeaponController : MonoBehaviour
 
 
     [Header("Bullet details")]
+    [SerializeField] private float bulletImpactForce = 100;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
 
@@ -157,6 +158,8 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         FireSingleBullet();
+
+        TriggerEnemyDodge();
     }
 
     private void FireSingleBullet()
@@ -171,7 +174,7 @@ public class PlayerWeaponController : MonoBehaviour
         Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
 
         Bullet bulletScript = newBullet.GetComponent<Bullet>();
-        bulletScript.BulletSetup(currentWeapon.gunDistance);
+        bulletScript.BulletSetup(currentWeapon.gunDistance, bulletImpactForce);
 
         Vector3 bulletsDirection = currentWeapon.ApplySpread(BulletDirection());
 
@@ -213,6 +216,21 @@ public class PlayerWeaponController : MonoBehaviour
     public Weapon CurrentWeapon() => currentWeapon;
 
     public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
+
+    private void TriggerEnemyDodge()
+    {
+        Vector3 rayOrigin = GunPoint().position;
+        Vector3 rayDirection = BulletDirection();
+
+        if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity))
+        {
+            Enemy_Melee enemy_Melee = hit.collider.gameObject.GetComponentInParent<Enemy_Melee>();
+
+            if (enemy_Melee != null)
+                enemy_Melee.ActivateDodgeRoll();
+            
+        }
+    }
 
     #region Input Events
     private void AssignInputEvents()

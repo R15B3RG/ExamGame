@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public float impactForce;
+
     [SerializeField] private GameObject bulletImpactFX;
 
     private BoxCollider cd;
@@ -21,8 +23,10 @@ public class Bullet : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void BulletSetup(float flyDistance)
+    public void BulletSetup(float flyDistance, float impactForce)
     {
+        this.impactForce = impactForce;
+
         bulletDisabled = false;
         cd.enabled = true;
         meshRenderer.enabled = true;
@@ -63,8 +67,29 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+
         CreateImpactFx(collision);
         ReturnBulletToPool();
+
+        Enemy enemy = collision.gameObject.GetComponentInParent<Enemy>();
+        EnemyShield shield = collision.gameObject.GetComponent<EnemyShield>();
+
+        if(shield != null)
+        {
+            shield.ReduceDurability();
+            return;
+        }
+
+        if (enemy != null)
+        {
+            Vector3 force = rb.linearVelocity.normalized * impactForce;
+            Rigidbody hitRigidbody = collision.collider.attachedRigidbody;
+
+            enemy.GetHit();
+
+            enemy.HitImpact(force, collision.contacts[0].point, hitRigidbody);
+        }
+        
     }
 
     private void ReturnBulletToPool() => ObjectPool.instance.ReturnObject(gameObject);
