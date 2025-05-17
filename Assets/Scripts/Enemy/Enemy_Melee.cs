@@ -16,7 +16,7 @@ public struct AttackData
 }
 
 public enum AttackType_Melee { Close, Charge }
-public enum EnemyMelee_Type { Regular, Shield, Dodge }
+public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow }
 
 public class Enemy_Melee : Enemy
 {
@@ -32,12 +32,23 @@ public class Enemy_Melee : Enemy
 
     public DeadState_Melee deadState { get; private set; }
 
+    public AbilityState_Melee abilityState { get; private set; }
+
 
     [Header("Enemy settings")]
     public EnemyMelee_Type meleeType;
     public Transform shieldTransform;
     public float dodgeCooldown;
     private float lastTimeDodge;
+
+
+    [Header("Axe throw ability")]
+    public GameObject axePrefab;
+    public float axeFlySpeed;
+    public float axeAimTimer;
+    public float axeThrowCooldown;
+    public Transform axeStartPoint;
+    private float lastTimeAxeThrown;
 
 
     [Header("Attack data")]
@@ -57,6 +68,7 @@ public class Enemy_Melee : Enemy
         chaseState = new ChaseState_Melee(this, stateMachine, "Chase");
         attackState = new AttackState_Melee(this, stateMachine, "Attack");
         deadState = new DeadState_Melee(this, stateMachine, "Idle"); // Idle anim is just a placeholder. We use ragdoll
+        abilityState = new AbilityState_Melee(this, stateMachine, "AxeThrow");
     }
 
     protected override void Start()
@@ -75,6 +87,13 @@ public class Enemy_Melee : Enemy
         stateMachine.currentState.Update();
     }
 
+    public override void AbilityTrigger()
+    {
+        base.AbilityTrigger();
+
+        moveSpeed = moveSpeed * .6f;
+        pulledWeapon.gameObject.SetActive(false);
+    }
 
     private void InitializeSpeciality()
     {
@@ -121,6 +140,22 @@ public class Enemy_Melee : Enemy
             anim.SetTrigger("Dodge");
         }
         
+    }
+
+
+    public bool CanThrowAxe()
+    {
+
+        if (meleeType != EnemyMelee_Type.AxeThrow)
+            return false;
+
+        if (Time.time > lastTimeAxeThrown + axeThrowCooldown)
+        {
+            lastTimeAxeThrown = Time.time;
+            return true;
+        }
+
+        return false;
     }
 
     protected override void OnDrawGizmos()
