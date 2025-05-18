@@ -38,11 +38,16 @@ public class DeadState_Melee : EnemyState
 
         //Uncomment script below if you want to disable interaction
 
-        //if (stateTimer < 0 && interactionDisabled == false)
-        //{
-        //    interactionDisabled = true;
-        //    ragdoll.RagdollActive(false);
-        //    ragdoll.CollidersActive(false);
-        //}
+        //DisableInteractionIfShould();
+    }
+
+    private void DisableInteractionIfShould()
+    {
+        if (stateTimer < 0 && interactionDisabled == false)
+        {
+            interactionDisabled = true;
+            ragdoll.RagdollActive(false);
+            ragdoll.CollidersActive(false);
+        }
     }
 }
