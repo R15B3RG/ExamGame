@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
-public struct AttackData
+public struct AttackData_EnemyMelee
 {
     public string attackName;
     public float attackRange;
@@ -58,8 +58,8 @@ public class Enemy_Melee : Enemy
 
 
     [Header("Attack data")]
-    public AttackData attackData;
-    public List<AttackData> attackList;
+    public AttackData_EnemyMelee attackData;
+    public List<AttackData_EnemyMelee> attackList;
 
     protected override void Awake()
     {
@@ -81,10 +81,13 @@ public class Enemy_Melee : Enemy
         base.Start();
 
         stateMachine.Initialize(idleState);
+        ResetCooldown();
 
-        InitializeSpeciality();
+        InitializePerk();
 
         visuals.SetupLook();
+
+        UpdateAttackData();
     }
 
     protected override void Update()
@@ -116,7 +119,21 @@ public class Enemy_Melee : Enemy
         EnableWeaponModel(false);
     }
 
-    private void InitializeSpeciality()
+
+    public void UpdateAttackData()
+    {
+        Enemy_WeaponModel currentWeapon = visuals.currentWeaponModel.GetComponent<Enemy_WeaponModel>();
+
+        if (currentWeapon.weaponData != null)
+        {
+            attackList = new List<AttackData_EnemyMelee>(currentWeapon.weaponData.attackData);
+
+            turnSpeed = currentWeapon.weaponData.turnSpeed;
+        }
+            
+    }
+
+    private void InitializePerk()
     {
         if(meleeType == EnemyMelee_Type.AxeThrow)
         {
@@ -150,9 +167,7 @@ public class Enemy_Melee : Enemy
         visuals.currentWeaponModel.gameObject.SetActive(active);
     }
 
-    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
-
-
+    
     public void ActivateDodgeRoll()
     {
 
@@ -192,6 +207,13 @@ public class Enemy_Melee : Enemy
         return false;
     }
 
+    private void ResetCooldown()
+    {
+        lastTimeDodge -= dodgeCooldown;
+
+        lastTimeAxeThrown -= axeThrowCooldown;
+    }
+
 
     private float GetAnimationClipDuration(string clipName)
     {
@@ -206,6 +228,9 @@ public class Enemy_Melee : Enemy
         Debug.Log(clipName + " animation not found!");
         return 0;
     }
+
+
+    public bool PlayerInAttackRange() => Vector3.Distance(transform.position, player.position) < attackData.attackRange;
 
     protected override void OnDrawGizmos()
     {
