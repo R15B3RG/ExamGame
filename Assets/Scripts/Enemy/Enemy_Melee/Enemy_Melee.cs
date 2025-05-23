@@ -96,8 +96,7 @@ public class Enemy_Melee : Enemy
 
         stateMachine.currentState.Update();
 
-        if(ShouldEnterBattleMode())
-            EnterBattleMode();
+        
         
     }
 
