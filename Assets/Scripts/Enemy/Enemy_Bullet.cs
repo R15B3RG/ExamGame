@@ -4,6 +4,7 @@ public class Enemy_Bullet : Bullet
 {
     protected override void OnCollisionEnter(Collision collision)
     {
+
         CreateImpactFx(collision);
         ReturnBulletToPool();
 

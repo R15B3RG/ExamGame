@@ -22,7 +22,7 @@ public enum EnemyMelee_Type { Regular, Shield, Dodge, AxeThrow }
 public class Enemy_Melee : Enemy
 {
 
-    public Enemy_Visuals visuals {  get; private set; }
+    
 
     #region States
     public IdleState_Melee idleState { get; private set; }
@@ -43,6 +43,7 @@ public class Enemy_Melee : Enemy
 
     [Header("Enemy settings")]
     public EnemyMelee_Type meleeType;
+    public Enemy_MeleeWeaponType weaponType;
     public Transform shieldTransform;
     public float dodgeCooldown;
     private float lastTimeDodge = -10;
@@ -65,7 +66,7 @@ public class Enemy_Melee : Enemy
     {
         base.Awake();
 
-        visuals = GetComponent<Enemy_Visuals>();
+        
 
         idleState = new IdleState_Melee(this, stateMachine, "Idle");
         moveState = new MoveState_Melee(this, stateMachine, "Move");
@@ -136,7 +137,7 @@ public class Enemy_Melee : Enemy
     {
         if(meleeType == EnemyMelee_Type.AxeThrow)
         {
-            visuals.SetupWeaponType(Enemy_MeleeWeaponType.Throw);
+            weaponType = Enemy_MeleeWeaponType.Throw;
         }
 
 
@@ -144,12 +145,12 @@ public class Enemy_Melee : Enemy
         {
             anim.SetFloat("ChaseIndex", 1);
             shieldTransform.gameObject.SetActive(true);
-            visuals.SetupWeaponType(Enemy_MeleeWeaponType.OneHand);
+            weaponType = Enemy_MeleeWeaponType.OneHand;
         }
 
         if(meleeType == EnemyMelee_Type.Dodge)
         {
-            visuals.SetupWeaponType(Enemy_MeleeWeaponType.Unarmed);
+            weaponType = Enemy_MeleeWeaponType.Unarmed;
         }
     }
 
