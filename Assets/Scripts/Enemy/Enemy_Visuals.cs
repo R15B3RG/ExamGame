@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 
 public enum Enemy_MeleeWeaponType { OneHand, Throw, Unarmed }
@@ -22,6 +23,11 @@ public class Enemy_Visuals : MonoBehaviour
     [SerializeField] private Texture[] colorTextures;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
+
+    [Header("Rig references")]
+    [SerializeField] private Transform leftHandIK;
+    [SerializeField] private Transform leftElbowIK;
+    [SerializeField] private Rig rig;
 
     public void EnableWeaponTrail(bool enable)
     {
@@ -96,7 +102,12 @@ public class Enemy_Visuals : MonoBehaviour
         foreach (var weaponModel in weaponModels)
         {
             if (weaponModel.weaponType == weaponType)
+            {
+                SwitchAnimationLayer(((int)weaponModel.weaponHoldType));
+                SetupLeftHandIK(weaponModel.leftHandTarget, weaponModel.leftElbowTarget);
                 return weaponModel.gameObject;
+            }
+                
         }
 
         return null;
@@ -143,4 +154,32 @@ public class Enemy_Visuals : MonoBehaviour
             GetComponentInChildren<Animator>().runtimeAnimatorController = overrideController;
         }
     }
+
+    private void SwitchAnimationLayer(int layerIndex)
+    {
+
+        Animator anim = GetComponentInChildren<Animator>();
+
+        for (int i = 1; i < anim.layerCount; i++)
+        {
+            anim.SetLayerWeight(i, 0);
+        }
+
+        anim.SetLayerWeight(layerIndex, 1);
+    }
+
+    public void EnableIK(bool enable)
+    {
+        rig.weight = enable ? 1 : 0;
+    }
+
+    private void SetupLeftHandIK(Transform leftHandTarget, Transform leftElbowTarget)
+    {
+        leftHandIK.localPosition = leftHandTarget.localPosition;
+        leftHandIK.localRotation = leftHandTarget.localRotation;
+
+        leftElbowIK.localPosition = leftElbowTarget.localPosition;
+        leftElbowIK.localRotation = leftElbowTarget.localRotation;
+    }
+   
 }
