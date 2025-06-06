@@ -115,7 +115,7 @@ public class Enemy_Melee : Enemy
     {
         base.AbilityTrigger();
 
-        moveSpeed = moveSpeed * .6f;
+        walkSpeed = walkSpeed * .6f;
         EnableWeaponModel(false);
     }
 
